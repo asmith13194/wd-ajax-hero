@@ -8,6 +8,7 @@
 
     for (const movie of movies) {
       const $col = $('<div>').addClass('col s6');
+      // const $current = $('<div>').addClass('current');
       const $card = $('<div>').addClass('card hoverable');
       const $content = $('<div>').addClass('card-content center');
       const $title = $('<h6>').addClass('card-title truncate');
@@ -17,7 +18,9 @@
         'data-tooltip': movie.title
       });
 
-      $title.tooltip({ delay: 50 }).text(movie.title);
+      $title.tooltip({
+        delay: 50
+      }).text(movie.title);
 
       const $poster = $('<img>').addClass('poster');
 
@@ -57,4 +60,64 @@
   };
 
   // ADD YOUR CODE HERE
+  $('form').submit(function(event) {
+    event.preventDefault();
+    movies.length = 0
+    var value = ($(search).val())
+    var $xhr = $.getJSON('http://www.omdbapi.com/?s=' + value);
+    $xhr.done(function(data) {
+      if ($xhr.status !== 200) {
+        return;
+      }
+
+      var search = data.Search
+      for (var i=0;i<search.length;i++){
+        var movieInfo = new Object();
+        movieInfo.id = data.Search[i].imdbID
+        movieInfo.poster = data.Search[i].Poster
+        movieInfo.title = data.Search[i].Title
+        movieInfo.year = data.Search[i].Year
+
+
+        $.getJSON('http://www.omdbapi.com/?i=' + data.Search[i].imdbID) .done(function(data2){
+          if ($xhr.status !== 200) {
+            return;
+          }
+          // console.log('data2 ', data2)
+          // var movieInfo2 = new Object();
+          // console.log('data2.plot ', data2.Plot);
+          movieInfo.plot = data2.Plot
+          // console.log(movieInfo)
+          // movies.push(movieInfo)
+          console.log(movies);
+          renderMovies()
+
+          $xhr.fail(function(err) {
+            console.log(err);
+          });
+
+        });
+
+        movies.push(movieInfo)
+        renderMovies()
+        // console.log(movieInfo)
+      }
+      var clear = document.getElementById('search').value='';
+
+
+      // var movieInfo = new Object();
+      // movieInfo.id = data.Search.imdbID
+      // movieInfo.poster = data.Search.Poster
+      // movieInfo.title = data.Search.Title
+      // movieInfo.year = data.Search.Year
+      // console.log(movieInfo)
+      //
+    });
+
+    $xhr.fail(function(err) {
+      console.log(err);
+    });
+
+  })
+
 })();
