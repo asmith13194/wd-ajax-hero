@@ -69,27 +69,21 @@
       if ($xhr.status !== 200) {
         return;
       }
-
       var search = data.Search
-      for (var i=0;i<search.length;i++){
-        var movieInfo = new Object();
-        movieInfo.id = data.Search[i].imdbID
-        movieInfo.poster = data.Search[i].Poster
-        movieInfo.title = data.Search[i].Title
-        movieInfo.year = data.Search[i].Year
-
-
-        $.getJSON('http://www.omdbapi.com/?i=' + data.Search[i].imdbID) .done(function(data2){
+      for (var i = 0; i < search.length; i++) {
+        $.getJSON('http://www.omdbapi.com/?i=' + data.Search[i].imdbID).done(function(data2) {
           if ($xhr.status !== 200) {
             return;
           }
-          // console.log('data2 ', data2)
-          // var movieInfo2 = new Object();
-          // console.log('data2.plot ', data2.Plot);
+
+          var movieInfo = new Object();
+          movieInfo.id = data2.imdbID
+          movieInfo.poster = data2.Poster
+          movieInfo.title = data2.Title
+          movieInfo.year = data2.Year
           movieInfo.plot = data2.Plot
-          // console.log(movieInfo)
-          // movies.push(movieInfo)
-          console.log(movies);
+
+          movies.push(movieInfo)
           renderMovies()
 
           $xhr.fail(function(err) {
@@ -98,22 +92,9 @@
 
         });
 
-        movies.push(movieInfo)
-        renderMovies()
-        // console.log(movieInfo)
       }
-      var clear = document.getElementById('search').value='';
-
-
-      // var movieInfo = new Object();
-      // movieInfo.id = data.Search.imdbID
-      // movieInfo.poster = data.Search.Poster
-      // movieInfo.title = data.Search.Title
-      // movieInfo.year = data.Search.Year
-      // console.log(movieInfo)
-      //
+      var clear = document.getElementById('search').value = '';
     });
-
     $xhr.fail(function(err) {
       console.log(err);
     });
